@@ -21,9 +21,19 @@ var distFiles = path.join(distDir, '/**/*');
 var stylusConfig = {};
 var prefixConfig = {};
 
+
+/* tasks */
+
+/* build tasks */
 gulp.task('clean', function(){
   gulp.src(distFiles)
     .pipe(clean());
+});
+
+gulp.task('browserify', function(){
+  return gulp.src(srcFiles)
+    .pipe() //TODO: browserify this thing
+    .pipe(gulp.dest(distDir));
 });
 
 gulp.task('css', function(){
@@ -33,28 +43,35 @@ gulp.task('css', function(){
     .pipe(gulp.dest(distDir));
 });
 
-gulp.task('build', function(){
-  runSequence('clean', ['browserify'], function(){
-    console.log('Build completed!');
-  });
-});
-
+/* testing/quality tasks */
 gulp.task('lint', function(){
   return gulp.src(srcFiles)
     .pipe(eslint({ useEslintrc: true }))
     .pipe(eslint.formatEach('compact', process.stderr));
 });
 
-gulp.task('browserify', function(){
-  return gulp.src(srcFiles)
-    .pipe()
-    .pipe(gulp.dest(distDir));
-});
-
 gulp.task('test', function(){
   // run the tests
+  // TODO: make tests, plug them in
 });
 
+
+/* main build sequence */
+gulp.task('build', function(){
+  runSequence('clean', ['browserify'], function(){
+    console.log('Build completed!');
+  });
+});
+
+
+/* main devtime sequence */
+gulp.task('dev', function(){
+  runSequence('build', ['lint', 'test'], function(){
+    console.log('dev complete');
+  });
+});
+
+/* watches */
 gulp.task('watch', function(){
-  gulp.watch(srcFiles, ['build', 'lint', 'test']);
+  gulp.watch(srcFiles, 'dev');
 });
