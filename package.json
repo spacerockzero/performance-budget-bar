@@ -1,7 +1,7 @@
 {
   "name": "perf-budget-bar",
   "version": "1.0.0",
-  "description": "A tool an ui to embed a performance budget check into each of your webpages",
+  "description": "A tool and ui to embed a performance budget check into each of your webpages",
   "main": "index.js",
   "scripts": {
     "test": "gulp test"
