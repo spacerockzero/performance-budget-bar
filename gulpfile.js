@@ -60,7 +60,7 @@ gulp.task('browserify', function(){
     }
     var b = browserify({
       entries: entries,
-      // debug: true,
+      debug: true,
       transform: [hbsfy, stylify]
     });
     b.bundle().pipe(bundledStream);
