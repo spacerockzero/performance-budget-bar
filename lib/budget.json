@@ -1,0 +1,44 @@
+{
+  "metrics": {
+    "backEndTime": true,
+    "frontEndTime": true,
+    "fullyLoadedTime": true,
+    "rumSpeedIndex": true,
+    "firstByteTime": true,
+    "firstPaintTime": true,
+    "latencyTime": true,
+    "jsErrors": true
+  },
+  "budgets": {
+    "global": {
+      "jsErrors": {
+        "max": 0
+      }
+    },
+    "connections": {
+      "3g": {
+        "backEndTime": {
+          "max": 1000
+        },
+        "frontEndTime": {
+          "max": 3000
+        },
+        "fullyLoadedTime": {
+          "max": 4000
+        },
+        "rumSpeedIndex": {
+          "max": 3000
+        },
+        "firstByteTime": {
+          "max": 900
+        },
+        "firstPaintTime": {
+          "max": 3000
+        },
+        "latencyTime": {
+          "max": 200
+        },
+      }
+    }
+  }
+}

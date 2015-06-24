@@ -18,6 +18,8 @@ var through     = require('through2');
 var gutil       = require('gulp-util');
 var uglify      = require('gulp-uglify');
 var sourcemaps  = require('gulp-sourcemaps');
+var stylify     = require('stylify');
+var livereload  = require('gulp-livereload');
 
 /* config */
 var srcDir       = 'lib';
@@ -38,49 +40,35 @@ gulp.task('clean', function(){
     .pipe(clean());
 });
 
-gulp.task('browserify', function(){
-  // gulp expects tasks to return a stream, so we create one here.
-  var bundledStream = through();
 
+gulp.task('browserify', function(){
+  var bundledStream = through();
   bundledStream
-    // turns the output bundle stream into a stream containing
-    // the normal attributes gulp plugins expect.
-    .pipe(source('perf-budget-bar.js'))
-    // the rest of the gulp task, as you would normally write it.
-    // here we're copying from the Browserify + Uglify2 recipe.
+    .pipe(source(path.join('perf-budget-bar.js')))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
       // Add gulp plugins to the pipeline here.
-      .pipe(hbsfy())
       .pipe(uglify())
       .on('error', gutil.log)
-    .pipe(sourcemaps.write(distDir))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(distDir));
-
-  // "globby" replaces the normal "gulp.src" as Browserify
-  // creates it's own readable stream.
   globby([ path.join(srcJS) ], function(err, entries) {
     // ensure any errors from globby are handled
     if (err) {
       bundledStream.emit('error', err);
       return;
     }
-
-    // create the Browserify instance.
     var b = browserify({
       entries: entries,
-      debug: true,
-      transform: []
+      // debug: true,
+      transform: [hbsfy, stylify]
     });
-
-    // pipe the Browserify stream into the stream we created earlier
-    // this starts our gulp pipeline.
     b.bundle().pipe(bundledStream);
   });
-
   // finally, we return the stream, so gulp knows when this task is done.
   return bundledStream;
 });
+
 
 gulp.task('css', function(){
   gulp.src(path.join(srcDir, '/style.styl'))
@@ -89,6 +77,7 @@ gulp.task('css', function(){
     .pipe(gulp.dest(distDir));
 });
 
+
 /* testing/quality tasks */
 gulp.task('lint', function(){
   return gulp.src(srcFiles)
@@ -96,28 +85,34 @@ gulp.task('lint', function(){
     .pipe(eslint.formatEach('compact', process.stderr));
 });
 
+
 gulp.task('test', function(){
   // run the tests
   // TODO: make tests, plug them in
 });
 
 
+
 /* main build sequence */
 gulp.task('build', function(){
   runSequence('clean', ['browserify'], function(){
     console.log('Build completed!');
+    livereload();
   });
 });
+
 
 
 /* main devtime sequence */
 gulp.task('dev', function(){
-  runSequence('build', ['lint', 'test'], function(){
+  runSequence('build', function(){
     console.log('dev complete');
   });
 });
 
+
 /* watches */
 gulp.task('watch', function(){
-  gulp.watch(srcFiles, 'dev');
+  livereload.listen();
+  gulp.watch(srcFiles, ['dev']);
 });
