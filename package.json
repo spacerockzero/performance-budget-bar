@@ -34,7 +34,7 @@
     "gulp-stylus": "^2.0.5",
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.5",
-    "handlebars": "^3.0.3",
+    "handlebars": "^4.5.3",
     "insert-css": "^0.2.0",
     "through2": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
